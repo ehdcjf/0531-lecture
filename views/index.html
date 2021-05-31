@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>웹소켓</title>
+</head>
+<body>
+    Hello WebSocket
+    <input type="text" id='msg'>
+    <input type="button" id ="btn" value="버튼">
+    <div id="content"></div>
+    
+    <!-- 클라이언트에서 웹소켓 요청을 위해 필요한 라이브러리 -->
+    <script type="text/javascript" src="./socket.io.js"></script>
+    <script type="text/javascript">
+       let socket =  io('http://localhost:3000'); 
+
+       socket.on('connect',()=>{
+           const msg = document.querySelector('#msg'); 
+           msg.value = '접속이 완료되었습니다.'
+       })
+
+       const btn  = document.querySelector('#btn'); 
+       btn.addEventListener('click',()=>{ 
+           const msg = document.querySelector('#msg'); 
+           socket.emit('send',{msg:msg.value});
+           const content = document.querySelector('#content'); 
+            content.innerHTML += `내가 쓴 메시지 ${msg.value}<br> `
+       })
+       //on은 받을 때, emit은 보낼 때, 
+       
+       socket.on('call',(data)=>{
+            const content = document.querySelector('#content'); 
+            content.innerHTML += `다른 사람이 보낸 메시지 ${data.msg}<br> `
+       })
+    </script>
+</body>
+</html>
